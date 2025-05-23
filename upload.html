@@ -3,46 +3,47 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VisNet - Upload</title>
+  <title>VisNet - Upload Video</title>
   <link rel="stylesheet" href="style.css" />
-  <style>
-    .file-name {
-      font-size: 13px;
-      color: #333;
-      margin-top: 10px;
-      word-wrap: break-word;
-    }
-  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script defer src="script.js"></script>
 </head>
 <body>
-  <div class="upload-container">
-    <img src="VisNet.png" alt="VisNet Logo" class="logo-img"/>
+  <header class="navbar">
+    <img src="VisNet.png" alt="VisNet Logo" class="logo-img" />
+    <nav>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="upload.html">Try It</a></li>
+        <li><a href="about.html">About Us</a></li>
+      </ul>
+    </nav>
+  </header>
 
-    <p class="instruction">Upload a file, or choose a file you’ve already uploaded.</p>
+  <div class="upload-container">
+    <img src="VisNet.png" alt="VisNet Logo" class="logo-img2"/>
+    <br>
+    <br>
+
+    <p class="instruction">Upload a video file to analyze lip movements and convert to text</p>
 
     <div class="upload-box">
       <img src="file-icon.png" alt="File Icon" class="rocket-icon">
-      <p><strong>Drag a file here, or</strong></p>
-      <label for="fileInput" class="file-label">Choose a file to upload</label>
+      <p><strong>Drag your video here</strong></p>
+      <p>or</p>
+      <label for="fileInput" class="file-label">Browse your files</label>
       <input type="file" id="fileInput" accept=".mp4,.mov" />
       <p id="fileName" class="file-name"></p>
     </div>
 
-    <button class="convert-btn">Convert</button>
-    <p class="file-note">Supported files: mp4, mov</p>
+    <button class="convert-btn">Convert to Text</button>
+    <p class="file-note">Supported file formats: .mp4, .mov (Max size: 100MB)</p>
   </div>
 
-  <script>
-    const fileInput = document.getElementById('fileInput');
-    const fileNameDisplay = document.getElementById('fileName');
-
-    fileInput.addEventListener('change', function () {
-      if (fileInput.files.length > 0) {
-        fileNameDisplay.textContent = `Selected file: ${fileInput.files[0].name}`;
-      } else {
-        fileNameDisplay.textContent = '';
-      }
-    });
-  </script>
+  <footer>
+    <p>&copy; 2025 VisNet. All rights reserved.</p>
+  </footer>
 </body>
 </html>
