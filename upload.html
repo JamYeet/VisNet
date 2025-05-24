@@ -5,10 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>VisNet - Upload Video</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script defer src="script.js"></script>
+  <script src="upload-script.js"></script>
 </head>
 <body>
   <header class="navbar">
@@ -27,12 +24,11 @@
     <br>
     <br>
 
-    <p class="instruction">Upload a video file to analyze lip movements and convert to text</p>
+    <p class="instruction">Upload a video file to analyse lip movements and convert to text file</p>
 
     <div class="upload-box">
-      <img src="file-icon.png" alt="File Icon" class="rocket-icon">
-      <p><strong>Drag your video here</strong></p>
-      <p>or</p>
+      <img src="file-icon.png" alt="File Icon" class="file-icon">
+      <p><strong>Select your video here</strong></p>
       <label for="fileInput" class="file-label">Browse your files</label>
       <input type="file" id="fileInput" accept=".mp4,.mov" />
       <p id="fileName" class="file-name"></p>

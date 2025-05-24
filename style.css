@@ -1,7 +1,7 @@
 /* VisNet - Modern CSS Styling */
 
 /* === GLOBAL STYLES === */
-:root {
+:root { /* To be used throughout the website*/
   --primary-color: #4361ee;
   --secondary-color: #3f37c9;
   --accent-color: #00b4ff;
@@ -199,7 +199,6 @@ body {
   max-height: 0;
   overflow: hidden;
   background-color: var(--card-bg-color);
-  transition: max-height 0.3s ease, padding 0.3s ease;
 }
 
 .faq-question.active + .faq-answer {
@@ -245,13 +244,13 @@ body {
   background-color: rgba(244, 247, 250, 0.9);
 }
 
-.rocket-icon {
+.file-icon {
   width: 80px;
   margin-bottom: 15px;
   transition: var(--transition);
 }
 
-.upload-box:hover .rocket-icon {
+.upload-box:hover .file-icon {
   transform: scale(1.1);
 }
 
@@ -376,7 +375,7 @@ body {
     padding: 20px 15px;
   }
   
-  .rocket-icon {
+  .file-icon {
     width: 60px;
   }
 }
