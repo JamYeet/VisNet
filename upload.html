@@ -1,3 +1,4 @@
+<!-- UPLOAD.HTML -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,9 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>VisNet - Upload Video</title>
   <link rel="stylesheet" href="style.css" />
+  <!-- Script for file upload handling and processing -->
   <script src="upload-script.js"></script>
 </head>
 <body>
+  <!-- Same navigation header -->
   <header class="navbar">
     <img src="VisNet.png" alt="VisNet Logo" class="logo-img" />
     <nav>
@@ -19,23 +22,30 @@
     </nav>
   </header>
 
+  <!-- Main upload interface box -->
   <div class="upload-container">
     <img src="VisNet.png" alt="VisNet Logo" class="logo-img2"/>
     <br>
     <br>
 
+    <!-- User instructions -->
     <p class="instruction">Upload a video file to analyse lip movements and convert to text file</p>
 
+    <!-- File upload section-->
     <div class="upload-box">
       <img src="file-icon.png" alt="File Icon" class="file-icon">
       <p><strong>Select your video here</strong></p>
+      <!-- File input -->
       <label for="fileInput" class="file-label">Browse your files</label>
-      <input type="file" id="fileInput" accept=".mp4,.mov" />
+      <!-- Restricted to video formats only -->
+      <input type="file" id="fileInput" accept=".mp4" />
+      <!-- Display selected filename -->
       <p id="fileName" class="file-name"></p>
     </div>
 
     <button class="convert-btn">Convert to Text</button>
-    <p class="file-note">Supported file formats: .mp4, .mov (Max size: 100MB)</p>
+    <!-- File constraints information -->
+    <p class="file-note">Supported file formats: .mp4 (Max size: 100MB)</p>
   </div>
 
   <footer>

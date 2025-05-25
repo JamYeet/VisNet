@@ -1,5 +1,3 @@
-/* VisNet - Modern CSS Styling */
-
 /* === GLOBAL STYLES === */
 :root { /* To be used throughout the website*/
   --primary-color: #4361ee;
@@ -34,12 +32,12 @@ body {
 /* === NAVBAR === */
 .navbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Logo on the left, nav on the right */
   align-items: center;
   background-color: var(--card-bg-color);
-  padding: 15px 5%;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  position: fixed;
+  padding: 15px 5%; /* Responsive horizontal padding */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
+  position: fixed; 
   top: 0;
   left: 0;
   right: 0;
@@ -48,16 +46,16 @@ body {
 
 .logo-img {
   height: 40px;
-  width: auto;
+  width: auto; /* Maintain aspect ratio */
 }
 
 .nav-links {
   display: flex;
-  list-style: none;
+  list-style: none; /* Remove bullet points */
 }
 
 .nav-links li {
-  margin-left: 30px;
+  margin-left: 30px; /* Spacing between nav items */
 }
 
 .nav-links a {
@@ -70,9 +68,10 @@ body {
 }
 
 .nav-links a:hover {
-  color: var(--accent-color);
+  color: var(--accent-color); /* Color change on hover using global colour */
 }
 
+/* Animated underline effect for navigation links */
 .nav-links a::after {
   content: '';
   position: absolute;
@@ -90,11 +89,11 @@ body {
 
 /* === HOME PAGE === */
 .home-main {
-  margin-top: 80px;
+  margin-top: 80px; /* Account for fixed navbar height */
   padding: 40px 5%;
   max-width: 1200px;
   margin-left: auto;
-  margin-right: auto;
+  margin-right: auto; /* Center content */
 }
 
 .intro-section {
@@ -114,7 +113,7 @@ body {
 .intro-section p {
   font-size: 1.2rem;
   max-width: 700px;
-  margin: 0 auto 30px;
+  margin: 0 auto 30px; /* Center with bottom margin */
   color: var(--text-light);
 }
 
@@ -123,18 +122,20 @@ body {
   background-color: var(--accent-color);
   color: white;
   padding: 12px 30px;
-  border-radius: 30px;
+  border-radius: 30px; /* Forms a pill shape */
   font-weight: 600;
   text-decoration: none;
   transition: var(--transition);
-  box-shadow: 0 4px 15px rgba(0, 180, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 180, 255, 0.3); /* Glowing effect */
 }
 
+/* Try button effect on hover */
 .try-btn:hover {
   background-color: var(--hover-color);
   transform: translateY(-3px);
 }
 
+/* Information card styling */
 .how-it-works {
   background-color: var(--card-bg-color);
   padding: 60px 40px;
@@ -149,6 +150,7 @@ body {
   font-size: 2rem;
 }
 
+/* FAQ Section */
 .faq-section {
   margin: 60px 0;
 }
@@ -163,10 +165,11 @@ body {
 .faq-item {
   margin-bottom: 15px;
   border-radius: 10px;
-  overflow: hidden;
+  overflow: hidden; /* Hide content overflow during transitions */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
+/* Interactive FAQ question buttons */
 .faq-question {
   width: 100%;
   padding: 20px;
@@ -184,8 +187,9 @@ body {
   position: relative;
 }
 
+/* Plus/minus indicator for FAQ toggle */
 .faq-question:after {
-  content: '+';
+  content: '+'; /* Plus sign on default */
   font-size: 1.5rem;
   color: var(--accent-color);
 }
@@ -194,16 +198,17 @@ body {
   content: '−';
 }
 
+/* Collapsible FAQ answers */
 .faq-answer {
   padding: 0;
-  max-height: 0;
+  max-height: 0; /* Hidden by default */
   overflow: hidden;
   background-color: var(--card-bg-color);
 }
 
 .faq-question.active + .faq-answer {
   padding: 20px;
-  max-height: 200px;
+  max-height: 200px; /* Expand when active (utilises script)*/
 }
 
 /* === UPLOAD PAGE === */
@@ -229,6 +234,7 @@ body {
   color: var(--text-light);
 }
 
+/* File upload area */
 .upload-box {
   border: 2px dashed var(--border-color);
   padding: 40px 25px;
@@ -267,6 +273,7 @@ body {
   display: none;
 }
 
+/* Display selected filename */
 .file-name {
   font-size: 0.9rem;
   color: var(--text-color);
@@ -275,6 +282,7 @@ body {
   font-weight: 500;
 }
 
+/* Convert button */
 .convert-btn {
   margin-top: 30px;
   background-color: var(--accent-color);
@@ -331,6 +339,7 @@ body {
 }
 
 /* === RESPONSIVE DESIGN === */
+/* Tablet and mobile breakpoints */
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;
@@ -342,44 +351,63 @@ body {
   }
   
   .nav-links li {
-    margin: 0 10px;
+    margin: 0 10px; /* Reduced spacing for smaller screens */
   }
   
   .home-main {
-    margin-top: 140px;
+    margin-top: 140px; /* Account for taller stacked navbar */
   }
   
   .intro-section h1 {
-    font-size: 2.2rem;
+    font-size: 2.2rem; /* Smaller heading for mobile */
   }
   
   .about-container, .upload-container {
-    padding: 30px 20px;
+    padding: 30px 20px; /* Reduced padding for smaller screens */
   }
 }
 
+/* Mobile phone breakpoint */
 @media (max-width: 480px) {
   .nav-links li {
     margin: 0 5px;
   }
   
   .intro-section h1 {
-    font-size: 1.8rem;
+    font-size: 1.8rem; /* Even smaller for phones */
   }
   
   .try-btn {
-    padding: 10px 20px;
+    padding: 10px 20px; /* Smaller button to account for small touch screens */
   }
   
   .upload-box {
-    padding: 20px 15px;
+    padding: 20px 15px; /* Compacted upload area */
   }
   
   .file-icon {
-    width: 60px;
+    width: 60px; /* Smaller icon for mobile */
   }
 }
 
-.footer{
-  margin-bottom: 1110px;
+/* === FOOTER === */
+footer {
+  background-color: var(--card-bg-color);
+  padding: 20px 5%;
+  text-align: center;
+  border-top: 1px solid var(--border-color); /* Subtle top border */
+  margin-top: 60px; /* Space from content above */
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Push footer to bottom of page when content is short */
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-main, .upload-container, .about-container {
+  flex: 1; /* Allow main content to expand and push footer down if needed*/
 }

@@ -1,3 +1,4 @@
+<!--INDEX.HTML-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,9 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VisNet - Home</title>
   <link rel="stylesheet" href="style.css" />
+  <!-- Script for FAQ toggle -->
   <script src="index-script.js"></script>
 </head>
 <body>
+  <!-- Main navigation header, consistent on all pages-->
   <header class="navbar">
     <img src="VisNet.png" alt="VisNet Logo" class="logo-img" />
     <nav>
@@ -20,23 +23,28 @@
   </header>
 
   <main class="home-main">
+    <!-- Hero section with main value proposition -->
     <section class="intro-section">
       <h1>Welcome to VisNet</h1>
       <p>VisNet is a tool for visual speech recognition – detecting spoken words from lip movements using deep learning.</p>
+      <!-- Primary CTA button -->
       <a href="upload.html" class="try-btn">Try It Now</a>
     </section>
 
+    <!-- Technical explanation section -->
     <section class="how-it-works">
       <h2>How Does It Work?</h2>
       <p>Visual speech recognition works by analysing lip movements in videos using convolutional neural networks (CNNs). VisNet uses a combination of computer vision and deep learning models trained to interpret these movements and transcribe them into text.</p>
     </section>
 
+    <!-- Interactive FAQ section -->
     <section class="faq-section">
       <h2>Frequently Asked Questions</h2>
+      <!-- FAQ items - uses the JavaScript -->
       <div class="faq-item">
         <button class="faq-question">What file types are supported?</button>
         <div class="faq-answer">
-          <p>We currently support .mp4 and .mov video formats.</p>
+          <p>We currently only support .mp4 video formats.</p>
         </div>
       </div>
       <div class="faq-item">
