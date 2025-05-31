@@ -27,15 +27,17 @@ Install required packages
 pip install -r requirements.txt
 ```
 
-### 2. auto_avsr
+### 2. download the model and auto_avsr framework
 
 The VisNet web app uses the auto_avsr framework to power model our model inference.
 
-Clone the auto_avsr GitHub repository:
+1. Clone the auto_avsr GitHub repository:
 
 ```bash
 git clone https://github.com/mpc001/auto_avsr
 ```
+
+2. Download the VisNet model from [here](https://drive.google.com/file/d/1C1gzm1Gn02AVsPN-ERl3gBqNWcAR7CMd/view?usp=drive_link) and place it in the root directory. Alternatively, you can download a model from the auto_avsr [model zoo](https://github.com/mpc001/auto_avsr?tab=readme-ov-file#model-zoo).
 
 ### 2. Face Detection Setup
 
@@ -90,13 +92,17 @@ root/
 ├── uploads/           # Temporary upload directory
 ├── app.py            # Main Flask application
 └── requirements.txt  # Python dependencies
+└── auto_avsr
+└── face_alignment
+└── face_detection
 ```
 
 ### 4. Model Setup
 1. Download the required model files:
-   - Main model: Place `model_avg_10.pth` in the root directory
-   - Face detection models will be downloaded automatically during face_detection setup
-   - Face alignment models will be downloaded during face_alignment setup
+   - Main model: Place the modle in the root directory and set the DEFAULT_MODEL_PATH
+   - Face detection model: Uses ResNet50 and will be downloaded automatically during face_detection setup.
+     If the model isn't loaded, download the ResNet50 elsewhere.
+   - Face alignment model: will be downloaded during face_alignment setup
 
 ### 5. Running the Application
 
