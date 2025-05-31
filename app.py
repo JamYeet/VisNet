@@ -1,282 +1,134 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 import os
+import sys
 import torch
-import cv2
-import numpy as np
-from werkzeug.utils import secure_filename
-import tempfile
-import logging
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
-
-# Configuration
-app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100MB max file size
-UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'mp4'}
-
-# Create upload folder if it doesn't exist
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-# Global variable to store loaded model
-model = None
-device = None
-
-def allowed_file(filename):
-    """Check if file has allowed extension"""
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-from flask import Flask, request, jsonify
+import argparse
+from flask import Flask, request, render_template, jsonify, send_from_directory
 from flask_cors import CORS
-import os
-import torch
-import cv2
-import numpy as np
 from werkzeug.utils import secure_filename
-import tempfile
-import logging
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# Add the auto_avsr directory to Python path
+sys.path.insert(0, "./auto_avsr")
 
-app = Flask(__name__)
+from lightning import ModelModule
+from datamodule.transforms import VideoTransform
+from preparation.detectors.retinaface.detector import LandmarksDetector
+from preparation.detectors.retinaface.video_process import VideoProcess
+
+app = Flask(__name__, static_url_path='', template_folder='templates')
 CORS(app)  # Enable CORS for all routes
-
-# Configuration
+app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100MB max file size
-UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'mp4'}
 
-# Create upload folder if it doesn't exist
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# Ensure required directories exist
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+os.makedirs('static', exist_ok=True)
+os.makedirs('templates', exist_ok=True)
 
-# Global variable to store loaded model
-model = None
-device = None
+# Initialize model and pipeline components
+parser = argparse.ArgumentParser()
+args, _ = parser.parse_known_args(args=[])
+setattr(args, 'modality', 'video')
 
-def allowed_file(filename):
-    """Check if file has allowed extension"""
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-def load_model(model_path):
-    """Load your trained .pth model"""
-    global model, device
-    
-    try:
-        # Determine device
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        logger.info(f"Using device: {device}")
+class InferencePipeline(torch.nn.Module):
+    def __init__(self, args, ckpt_path, detector="retinaface"):
+        super(InferencePipeline, self).__init__()
+        self.modality = args.modality
         
-        # Load the checkpoint
-        checkpoint = torch.load(model_path, map_location=device)
-        logger.info(f"Checkpoint keys: {list(checkpoint.keys()) if isinstance(checkpoint, dict) else 'Not a dict'}")
-        
-        # Check if it's a state_dict or complete model
-        if isinstance(checkpoint, dict):
-            # It's a state_dict - you need to define your model architecture here
-            
-            # PLACEHOLDER: Replace this with your actual model class/architecture
-            # You need to import and instantiate your model here
-            # Example:
-            # from your_model_file import YourModelClass
-            # model = YourModelClass(input_size=..., hidden_size=..., num_classes=...)
-            
-            logger.error("Model saved as state_dict. You need to define your model architecture.")
-            logger.error("Please uncomment and modify the model instantiation code above.")
-            logger.error("Available keys in checkpoint: " + str(list(checkpoint.keys())))
-            
-            # Uncomment and modify these lines once you define your model:
-            # model.load_state_dict(checkpoint)
-            # model.to(device)
-            # model.eval()
-            
-            return False
-            
-        else:
-            # It's a complete model
-            model = checkpoint
-            model.to(device)
-            model.eval()
-            logger.info("Model loaded successfully")
-            return True
-        
-    except Exception as e:
-        logger.error(f"Error loading model: {str(e)}")
-        return False
+        # Initialize video components
+        self.landmarks_detector = LandmarksDetector(device="cuda:0" if torch.cuda.is_available() else "cpu")
+        self.video_process = VideoProcess(convert_gray=False)
+        self.video_transform = VideoTransform(subset="test")
 
+        # Load model
+        ckpt = torch.load(ckpt_path, map_location=lambda storage, loc: storage)
+        self.modelmodule = ModelModule(args)
+        self.modelmodule.model.load_state_dict(ckpt)
+        self.modelmodule.eval()
 
-def preprocess_video(video_path):
-    """
-    Preprocess video for your model
-    Adjust this function based on your model's input requirements
-    """
-    try:
-        # Open video file
-        cap = cv2.VideoCapture(video_path)
-        frames = []
-        
-        while True:
-            ret, frame = cap.read()
-            if not ret:
-                break
-                
-            # Add your preprocessing steps here
-            # Example preprocessing (adjust based on your model):
-            # - Resize frame
-            # - Extract lip region
-            # - Normalize
-            # - Convert to tensor
-            
-            # Placeholder preprocessing - replace with your actual preprocessing
-            frame_resized = cv2.resize(frame, (224, 224))  # Example size
-            frame_rgb = cv2.cvtColor(frame_resized, cv2.COLOR_BGR2RGB)
-            frames.append(frame_rgb)
-        
-        cap.release()
-        
-        # Convert to tensor format expected by your model
-        # This is a placeholder - adjust based on your model's input format
-        if frames:
-            frames_tensor = torch.tensor(np.array(frames), dtype=torch.float32)
-            frames_tensor = frames_tensor.permute(0, 3, 1, 2)  # (frames, channels, height, width)
-            frames_tensor = frames_tensor / 255.0  # Normalize to [0, 1]
-            return frames_tensor.unsqueeze(0)  # Add batch dimension
-        else:
-            return None
-            
-    except Exception as e:
-        logger.error(f"Error preprocessing video: {str(e)}")
-        return None
+    def load_video(self, data_filename):
+        import torchvision
+        return torchvision.io.read_video(data_filename, pts_unit="sec")[0].numpy()
 
-def predict_transcription(preprocessed_video):
-    """
-    Run inference with your model
-    Adjust this function based on your model's output format
-    """
-    try:
+    def forward(self, data_filename):
+        data_filename = os.path.abspath(data_filename)
+        assert os.path.isfile(data_filename), f"data_filename: {data_filename} does not exist."
+
+        video = self.load_video(data_filename)
+        landmarks = self.landmarks_detector(video)
+        video = self.video_process(video, landmarks)
+        video = torch.tensor(video)
+        video = video.permute((0, 3, 1, 2))
+        video = self.video_transform(video)
+        
         with torch.no_grad():
-            # Move input to device
-            preprocessed_video = preprocessed_video.to(device)
-            
-            # Run inference
-            output = model(preprocessed_video)
-            
-            # Process output based on your model
-            # This is a placeholder - replace with your actual post-processing
-            
-            # Example for sequence-to-sequence models:
-            # if hasattr(output, 'logits'):
-            #     logits = output.logits
-            # else:
-            #     logits = output
-            
-            # For text generation models, you might need to decode:
-            # predicted_ids = torch.argmax(logits, dim=-1)
-            # transcription = tokenizer.decode(predicted_ids[0], skip_special_tokens=True)
-            
-            # Placeholder transcription - replace with actual model output processing
-            transcription = "Placeholder transcription - replace with your model's actual output processing"
-            
-            return transcription
-            
-    except Exception as e:
-        logger.error(f"Error during prediction: {str(e)}")
-        return None
+            transcript = self.modelmodule(video)
 
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    """Handle file upload and transcription"""
-    try:
-        # Check if file is present
-        if 'video' not in request.files:
-            return jsonify({'success': False, 'error': 'No file provided'}), 400
-        
-        file = request.files['video']
-        
-        if file.filename == '':
-            return jsonify({'success': False, 'error': 'No file selected'}), 400
-        
-        if not allowed_file(file.filename):
-            return jsonify({'success': False, 'error': 'Invalid file type'}), 400
-        
-        if model is None:
-            return jsonify({'success': False, 'error': 'Model not loaded'}), 500
-        
-        # Save uploaded file temporarily
+        return transcript
+
+# Initialize the pipeline
+pipeline = InferencePipeline(args, "model_avg_10.pth")
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'mp4', 'avi', 'mov'}
+
+# Route for the home page
+@app.route('/')
+@app.route('/index.html')
+def home():
+    return render_template('index.html')
+
+@app.route('/upload.html')
+def upload():
+    return render_template('upload.html')
+
+@app.route('/about.html')
+def about():
+    return render_template('about.html')
+
+# Serve static files
+@app.route('/static/<path:path>')
+def serve_static(path):
+    return send_from_directory('static', path)
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    if 'video' not in request.files:
+        return jsonify({'error': 'No video file uploaded'}), 400
+    
+    file = request.files['video']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+    
+    if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        
-        with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(filename)[1]) as temp_file:
-            file.save(temp_file.name)
-            temp_path = temp_file.name
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
         
         try:
-            # Preprocess video
-            logger.info(f"Processing video: {filename}")
-            preprocessed_video = preprocess_video(temp_path)
+            # Run inference
+            transcript = pipeline(filepath)
             
-            if preprocessed_video is None:
-                return jsonify({'success': False, 'error': 'Failed to process video'}), 500
+            # Clean up
+            os.remove(filepath)
             
-            # Run transcription
-            transcription = predict_transcription(preprocessed_video)
-            
-            if transcription is None:
-                return jsonify({'success': False, 'error': 'Failed to generate transcription'}), 500
-            
-            logger.info("Transcription completed successfully")
-            
-            return jsonify({
-                'success': True,
-                'transcription': transcription,
-                'filename': filename
-            })
-            
-        finally:
-            # Clean up temporary file
-            try:
-                os.unlink(temp_path)
-            except:
-                pass
+            return jsonify({'transcript': transcript})
+        except Exception as e:
+            if os.path.exists(filepath):
+                os.remove(filepath)
+            return jsonify({'error': str(e)}), 500
     
-    except Exception as e:
-        logger.error(f"Upload error: {str(e)}")
-        return jsonify({'success': False, 'error': str(e)}), 500
-
-@app.route('/health', methods=['GET'])
-def health_check():
-    """Health check endpoint"""
-    return jsonify({
-        'status': 'healthy',
-        'model_loaded': model is not None,
-        'device': str(device) if device else None
-    })
-
-@app.errorhandler(413)
-def request_entity_too_large(error):
-    """Handle file too large error"""
-    return jsonify({'success': False, 'error': 'File too large. Maximum size is 100MB.'}), 413
+    return jsonify({'error': 'Invalid file type'}), 400
 
 if __name__ == '__main__':
-    # Load your model
-    MODEL_PATH = r'D:\UTS\Y3S1\Deep Learning\VisNet\model_avg_10.pth' # File location
+    # Move HTML files to templates if they exist in root
+    for html_file in ['index.html', 'upload.html', 'about.html']:
+        if os.path.exists(html_file) and not os.path.exists(os.path.join('templates', html_file)):
+            os.rename(html_file, os.path.join('templates', html_file))
     
-    if not os.path.exists(MODEL_PATH):
-        logger.error(f"Model file not found: {MODEL_PATH}")
-        logger.error("Please place your .pth model file in the same directory and update MODEL_PATH")
-        exit(1)
+    # Move static files to static directory if they exist in root
+    for static_file in ['style.css', 'upload-script.js', 'VisNet.png', 'file-icon.png']:
+        if os.path.exists(static_file) and not os.path.exists(os.path.join('static', static_file)):
+            os.rename(static_file, os.path.join('static', static_file))
     
-    logger.info("Loading model...")
-    if not load_model(MODEL_PATH):
-        logger.error("Failed to load model. Exiting.")
-        exit(1)
-    
-    logger.info("Starting Flask server...")
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    print("Server is running at http://localhost:5000")
+    app.run(debug=True, host='0.0.0.0', port=5000)

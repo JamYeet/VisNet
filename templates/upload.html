@@ -1,0 +1,158 @@
+<!-- UPLOAD.HTML -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VisNet - Upload Video</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <!-- Script for file upload handling and processing -->
+  <script src="/static/upload-script.js"></script>
+  <style>
+    .loading-spinner {
+      display: none;
+      width: 50px;
+      height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .results-container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: none;
+    }
+
+    .transcription-text {
+      margin-top: 15px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 5px;
+      white-space: pre-wrap;
+    }
+
+    .action-buttons {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .action-button {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      background: #3498db;
+      color: white;
+      cursor: pointer;
+      position: relative;
+      transition: background-color 0.3s;
+    }
+
+    .action-button:hover {
+      background: #2980b9;
+    }
+
+    .action-button.copied {
+      background: #2ecc71;
+    }
+
+    .copy-feedback {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(46, 204, 113, 0.9);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+      margin-bottom: 5px;
+    }
+
+    .copy-feedback.show {
+      opacity: 1;
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Same navigation header -->
+  <header class="navbar">
+    <img src="/static/VisNet.png" alt="VisNet Logo" class="logo-img" />
+    <nav>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="upload.html">Try It</a></li>
+        <li><a href="about.html">About Us</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Main upload interface box -->
+  <div class="upload-container">
+    <img src="/static/VisNet.png" alt="VisNet Logo" class="logo-img2"/>
+    <br>
+    <br>
+
+    <!-- User instructions -->
+    <p class="instruction">Upload a video file to analyse lip movements and convert to text file</p>
+
+    <!-- File upload section-->
+    <div class="upload-box">
+      <img src="/static/file-icon.png" alt="File Icon" class="file-icon">
+      <p><strong>Drag your video here</strong></p>
+      <p>or</p>
+      <!-- File input -->
+      <label class="file-label">Browse your files</label>
+      <!-- Restricted to video formats only -->
+      <input type="file" id="fileInput" accept=".mp4,.avi,.mov" />
+      <!-- Display selected filename -->
+      <p id="fileName" class="file-name"></p>
+    </div>
+
+    <button class="convert-btn">Convert to Text</button>
+    <!-- Loading spinner -->
+    <div class="loading-spinner" id="loadingSpinner"></div>
+    <!-- File constraints information -->
+    <p class="file-note">Supported file formats: .mp4 (Max size: 100MB)</p>
+  </div>
+
+  <!-- Results container -->
+  <div class="results-container" id="resultsContainer">
+    <h3>Transcription Results</h3>
+    <div class="transcription-text" id="transcriptionText"></div>
+    <div class="action-buttons">
+      <button class="action-button" id="copyButton">
+        Copy Text
+        <span class="copy-feedback">Copied!</span>
+      </button>
+      <button class="action-button" id="downloadButton">Download as .txt</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 VisNet. All rights reserved.</p>
+  </footer>
+</body>
+</html>
