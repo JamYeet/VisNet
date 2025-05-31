@@ -1,0 +1,51 @@
+# Virtual Environment
+venv/
+env/
+.env/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Model and Data directories
+auto_avsr/
+face_alignment/
+face_detection/
+lfs/
+model_avg_10.pth
+*.pth
+*.onnx
+*.pt
+
+# Uploads directory (temporary files)
+uploads/
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+logs/ 
