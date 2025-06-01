@@ -1,17 +1,36 @@
 # VisNet - Visual Speech Recognition Web Application
 
-Visnet is a web application that performs visual speech recognition using deep learning. Upload a video of someone speaking, and the application will transcribe the speech by analysing lip movements.
+VisNet is a web application that performs visual speech recognition using deep learning. Upload a video of someone speaking, and the application will transcribe the speech by analysing lip movements.
 
 ## Setup Instructions
 
 ### 1. Environment Setup
 
-1. Create and activate a virtual environment:
+This project requires Python 3.9. If you don't have it installed, you can use pyenv to manage Python versions:
 
-Create and activate virtual environment
+1. Install pyenv (macOS):
 ```bash
-python -m venv venv
+brew install pyenv
 ```
+
+2. Install Git LFS (required for model files):
+```bash
+brew install git-lfs
+git lfs install
+```
+
+3. Install Python 3.9:
+```bash
+pyenv install 3.9.10
+```
+
+4. Create and activate a virtual environment:
+
+Create virtual environment with Python 3.9
+```bash
+~/.pyenv/versions/3.9.10/bin/python -m venv venv
+```
+
 Activate on Windows
 ```bash
 venv\Scripts\activate
@@ -43,21 +62,7 @@ git clone https://github.com/mpc001/auto_avsr
 
 The face detection components need to be installed from GitHub repositories:
 
-1. First, ensure you have Git LFS installed:
-
-Install Git LFS if not already installed
-Windows (run as administrator):
-```bash
-curl -s -L https://github.com/git-lfs/git-lfs/releases/download/v3.4.0/git-lfs-windows-v3.4.0.exe -o git-lfs.exe
-./git-lfs.exe install
-```
-
-Linux:
-```bash
-curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
-sudo apt-get install git-lfs
-git lfs install
-```
+1. First, ensure you have Git LFS installed
 
 2. Clone and install face detection
 ```bash
@@ -77,10 +82,21 @@ cd ..
 ```
 
 ### 3. File Structure Setup
-Create the following directory structure:
+
+Create an uploads folder
+
+```bash
+mkdir uploads
+```
+
+Ensure you have the following directory structure:
+
 ```
 root/
-├── templates/          # HTML templates
+├── auto_avsr
+├── face_alignment
+├── face_detection
+├── templates/         # HTML templates
 │   ├── index.html
 │   ├── upload.html
 │   └── about.html
@@ -89,12 +105,9 @@ root/
 │   ├── upload-script.js
 │   ├── VisNet.png
 │   └── file-icon.png
-├── uploads/           # Temporary upload directory
+├── uploads/          # Temporary upload directory
 ├── app.py            # Main Flask application
 └── requirements.txt  # Python dependencies
-└── auto_avsr
-└── face_alignment
-└── face_detection
 ```
 
 ### 4. Model Setup
@@ -123,10 +136,10 @@ Start the Flask server
 python app.py
 ```
 
-The server will start at `http://localhost:5000`
+The server will start at `http://localhost:5001`
 
 ## Usage Guide
-1. Open `http://localhost:5000` in your web browser
+1. Open `http://localhost:5001` in your web browser
 2. Click "Try It" or navigate to the upload page
 3. Either drag & drop a video file or click to browse
 4. Supported formats: .mp4, .avi, .mov (max size: 100MB)
