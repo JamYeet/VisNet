@@ -107,6 +107,7 @@ root/
 │   └── file-icon.png
 ├── uploads/          # Temporary upload directory
 ├── app.py            # Main Flask application
+├── config.py         # Config file
 └── requirements.txt  # Python dependencies
 ```
 
@@ -142,7 +143,7 @@ The server will start at `http://localhost:5001`
 1. Open `http://localhost:5001` in your web browser
 2. Click "Try It" or navigate to the upload page
 3. Either drag & drop a video file or click to browse
-4. Supported formats: .mp4, .avi, .mov (max size: 100MB)
+4. Supported formats: .mp4 (max size: 100MB)
 5. Wait for processing to complete
 6. View the transcription results
 7. Use the copy or download buttons to save the results
