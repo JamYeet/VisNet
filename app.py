@@ -5,6 +5,7 @@ import argparse
 from flask import Flask, request, render_template, jsonify, send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
+from config import DEFAULT_MODEL_PATH
 
 # Add the auto_avsr directory to Python path
 sys.path.insert(0, "./auto_avsr")
@@ -66,7 +67,7 @@ class InferencePipeline(torch.nn.Module):
         return transcript
 
 # Initialize the pipeline
-pipeline = InferencePipeline(args, "model_avg_10.pth")
+pipeline = InferencePipeline(args, DEFAULT_MODEL_PATH)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'mp4', 'avi', 'mov'}
@@ -130,5 +131,5 @@ if __name__ == '__main__':
         if os.path.exists(static_file) and not os.path.exists(os.path.join('static', static_file)):
             os.rename(static_file, os.path.join('static', static_file))
     
-    print("Server is running at http://localhost:5000")
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    print("Server is running at http://localhost:5001")
+    app.run(debug=True, host='0.0.0.0', port=5001)
